@@ -1,0 +1,35 @@
+; ----------------------- TASK -------------------------
+;
+; a-100 Trivial expression
+;
+; Write a ttk-91 program that
+; a) allocates space for variables x and y,
+; b) calculates 2+2 and stores the result in register R1,
+; c) calculates 44-42 and stores the result in variable x,
+; d) calculates 10/x and stores the result in variable y.
+;
+; Estimated code length: max 15 instructions.
+
+; ------------- YOUR CODE -------------------------------
+;
+; Fill in your code here!
+;
+; Remember also to end the execution using an SVC instruction!
+
+
+X DC 0
+Y DC 0
+
+LOAD R2, =2
+ADD R1, =2(R2)      ; 2+2
+
+LOAD R2, =44
+SUB R2, =42         ; 44-42
+STORE R2, X         ; store to x
+
+LOAD R2, =10
+DIV R2, X           ; 10/x
+STORE R2, Y         ; store to y
+
+
+SVC SP, =HALT
