@@ -5,7 +5,7 @@ import Parser
 
 main :: IO ()
 main = do args <- getArgs
-          putStrLn . readExpr $ args !! 0
+          putStrLn . readExpr $ head args
 
 readExpr :: String -> String
 readExpr str = 

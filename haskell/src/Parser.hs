@@ -36,9 +36,10 @@ allInsructions = dataInsructions ++ arithmeticInstructions ++ logicInstructions 
 
 parseInstruction :: String -> Maybe Token
 parseInstruction str = 
-    case str `elem` allInsructions of
-        True -> Just $ Instruction str
-        False -> Nothing
+    if str `elem` allInsructions then
+        Just $ Instruction str
+    else 
+        Nothing
 
 
 variables = [Variable "X", Variable "Y"]
