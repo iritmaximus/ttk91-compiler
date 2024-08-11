@@ -1,0 +1,85 @@
+; ----------------------- TASK -------------------------
+;
+; e-310 Column-wise 2d-array
+;
+; Insert code to print out the value of array element
+; t[i,j]. Array t has 4 rows and 10 columns. Values for
+; i and j are read from input. Negative i completes the
+; program.
+;
+; Array t is stored column-wise. For example,
+; the 1st item in memory at memory location t is t[0,0],
+; and memory location t+1 has value is t[1,0].
+;
+; You may assume, that both i (0..3) and j (0..9) are
+; within their limits.
+;
+; Test with input 1,1,2,3,3,9,-1.
+;
+; Estimated code size: max 10 instructions.
+
+; ---- BEGINNING OF CODE -- DO NOT MODIFY --------------
+
+t ds 40  ; 4 * 10 array (4 rows, 10 columns)
+i dc 0  ; row index: 0..3
+j dc 0  ; column index: 0..9
+
+main push sp, =t
+     push sp, =40
+     call sp, init
+
+loop in r1, =kbd
+     store r1, i
+     jneg  r1, done
+     in r1, =kbd
+     store r1, j
+
+; ------------- YOUR CODE -------------------------------
+
+; Insert code to print out the value of array element
+; t[i,j]. Array t has 4 rows and 10 columns. Values for
+; i and j are read from input. Negative i completes the
+; program.
+
+; Array t is stored column-wise. For example,
+; the 1st item in memory at memory location t is t[0,0],
+; and memory location t+1 has value is t[1,0].
+
+        ; calc the column
+        load r1, =4
+        mul r1, j
+
+        add r1, i
+
+        ; load value to reg so we can print
+        load r2, t(r1)
+        out r2, =crt
+
+; -------- END OF CODE -- DO NOT MODIFY -----------------
+
+     jump loop
+
+done svc sp, =halt
+
+;  init (pt, sz) - initialize array pt[sz]
+;  pt call-by-ref
+;  sz call-by-value
+pt  equ -3
+sz equ -2
+init  pushr sp
+      load r5, =85  ; mask
+      load r1, =0
+      load r2, pt(fp)
+ini   load r4, r1
+      and r4, r5
+      store r4, (r2)  ; initialize array element
+      add  r1, =1
+
+      add r2, =1
+
+      comp r1, sz(fp)
+      jles ini
+
+      popr sp
+      exit sp, =2
+
