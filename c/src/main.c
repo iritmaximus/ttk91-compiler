@@ -1,5 +1,7 @@
-#include "token.h"
+#include <stdlib.h>
 #include <stdio.h>
+#include "token.h"
+#include "expr.h"
 
 #define FILENAME "../docs/example-file-harder.k91"
 
@@ -20,7 +22,9 @@ int main()
         return 1;
     }
 
-    if (yyparse() == 0) {
+    struct expr *parse_result = malloc(sizeof(*parse_result));
+
+    if (yyparse(parse_result) == 0) {
         printf("Parse succesful :)\n");
     } else {
         printf("Parse failed\n");

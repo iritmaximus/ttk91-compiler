@@ -79,7 +79,25 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+union YYSTYPE
+{
+#line 39 "src/parser.bison"
+
+    struct expr *expr;
+    struct oper *oper;
+    struct ttk_register *ttk_register;
+    struct value *value;
+    struct pure_value *pure_value;
+    struct label *label;
+    struct comment *comment;
+    char* name;
+    int num;
+    char character;
+
+#line 98 "include/token.h"
+
+};
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif
@@ -88,7 +106,7 @@ typedef int YYSTYPE;
 extern YYSTYPE yylval;
 
 
-int yyparse (void);
+int yyparse (struct expr *parse_result);
 
 
 #endif /* !YY_YY_INCLUDE_TOKEN_H_INCLUDED  */

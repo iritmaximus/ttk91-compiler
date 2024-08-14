@@ -1,12 +1,18 @@
 CC=gcc
-CC_FLAGS=-O2 -Wall -Wextra
+CC_FLAGS=-O2 -Wall -Wextra -g
 
 SRCDIR=src
 INCLUDEDIR=include
 
 FILES=$(SRCDIR)/main.c \
 	  $(SRCDIR)/scanner.c \
-	  $(SRCDIR)/parser.c
+	  $(SRCDIR)/parser.c \
+	  $(SRCDIR)/expr.c \
+	  $(SRCDIR)/label.c \
+	  $(SRCDIR)/ttk_register.c \
+	  $(SRCDIR)/comment.c \
+	  $(SRCDIR)/oper.c \
+	  $(SRCDIR)/value.c
 
 scanner: 
 	# this is case insensitive!!
