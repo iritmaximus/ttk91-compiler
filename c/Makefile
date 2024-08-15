@@ -19,7 +19,7 @@ scanner:
 	flex -i -o $(SRCDIR)/scanner.c $(SRCDIR)/scanner.flex
 
 parser:
-	bison --defines=$(INCLUDEDIR)/token.h --output=$(SRCDIR)/parser.c $(SRCDIR)/parser.bison -Wcounterexamples
+	bison --defines=$(INCLUDEDIR)/token.h --output=$(SRCDIR)/parser.c $(SRCDIR)/parser.bison -Wcounterexamples --debug -t
 
 all: scanner parser
 	$(CC) $(CC_FLAGS) -I$(INCLUDEDIR) $(FILES) -o compiler
