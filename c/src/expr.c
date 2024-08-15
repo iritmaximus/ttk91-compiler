@@ -3,7 +3,7 @@
 
 struct expr * expr_create(expr_t kind, struct label *l, struct oper *o, struct ttk_register *f_arg, struct value *s_arg, struct comment *c, struct expr *n)
 {
-    struct expr * e = malloc(sizeof(*e));
+    struct expr *e = malloc(sizeof(*e));
 
     e->kind = kind;
     e->label = l;
@@ -14,4 +14,15 @@ struct expr * expr_create(expr_t kind, struct label *l, struct oper *o, struct t
     e->next = n;
 
     return e;
+}
+
+void expr_copy(struct expr *orig, struct expr *copy)
+{
+    orig->kind = copy->kind;
+    orig->label = copy->label;
+    orig->oper = copy->oper;
+    orig->first_arg = copy->first_arg;
+    orig->second_arg = copy->second_arg;
+    orig->comment = copy->comment;
+    orig->next = copy->next;
 }

@@ -23,6 +23,12 @@ int main()
     }
 
     struct expr *parse_result = malloc(sizeof(*parse_result));
+    if (!parse_result)
+    {
+        printf("ERROR: Failed to allocate memory for parse_result.\n");
+        return 1;
+    }
+
 
     if (yyparse(parse_result) == 0) {
         printf("Parse succesful :)\n");

@@ -9,6 +9,7 @@
 
 typedef enum {
     INSTRUCTION,
+    INSTRUCTION_ONE_ARG,
     LABEL_DEF,
     COMMENT
 } expr_t;

@@ -12,7 +12,8 @@ typedef enum {
 
 typedef enum {
     NONE,
-    INDEXED
+    INDEXED,
+    INDEXED_ONLY_IREG
 } index_t;
 
 typedef enum {

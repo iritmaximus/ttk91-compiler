@@ -1,12 +1,18 @@
 #ifndef REGISTER_H
 #define REGISTER_H
 
+typedef enum {
+    TTK_REGISTER,
+    STACK_TTK_REGISTER
+} ttk_register_t;
+
 struct ttk_register {
+    ttk_register_t kind;
     int id;
     int value;
 };
 
-struct ttk_register * ttk_register_create(char* id, int value);
-int parse_register_num(char *name);
+struct ttk_register * ttk_register_create(ttk_register_t kind, char* id, int value);
+int parse_register_num(char *name, ttk_register_t kind);
 
 #endif
