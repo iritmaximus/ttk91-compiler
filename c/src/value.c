@@ -28,11 +28,16 @@ struct pure_value * pure_value_create(value_t kind, struct ttk_register *ttk_reg
 
 addr_mode_t parse_addr_mode(char addr_mode)
 {
-    if (addr_mode == '=') 
+    switch (addr_mode)
     {
-        return IMMEDIATE;
+        case '=':
+            return IMMEDIATE;
+        case '@':
+            return INDIRECT;
     }
-    if (addr_mode == '@') 
+
+    return DIRECT;
+}
     {
         return INDIRECT;
     } 
