@@ -7,11 +7,16 @@ struct oper * oper_create(oper_t kind, char* oper_name)
 {
     struct oper *o = malloc(sizeof(*o));
 
-    char *name_copy = malloc(sizeof(char) * (strlen(oper_name)+1));
-    strcpy(name_copy, oper_name);
-
     o->kind = kind;
-    o->oper_name = name_copy;
+    o->oper_name = oper_name;
 
     return o;
 }
+
+struct oper * oper_create_data(char* oper_name)         { return oper_create(OPER_DATA, oper_name); }
+struct oper * oper_create_arithmetic(char* oper_name)   { return oper_create(OPER_AR, oper_name); }
+struct oper * oper_create_logic(char* oper_name)        { return oper_create(OPER_LOGIC, oper_name); }
+struct oper * oper_create_branch(char* oper_name)       { return oper_create(OPER_BRANCH, oper_name); }
+struct oper * oper_create_stack(char* oper_name)        { return oper_create(OPER_STACK, oper_name); }
+struct oper * oper_create_sys(char* oper_name)          { return oper_create(OPER_SYS, oper_name); }
+struct oper * oper_create_compiler(char* oper_name)     { return oper_create(OPER_COMPILER, oper_name); }

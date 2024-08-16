@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <string.h>
 #include "comment.h"
 
 struct comment * comment_create(char *text)

@@ -25,5 +25,14 @@ struct expr {
 };
 
 struct expr * expr_create(expr_t kind, struct label *l, struct oper *o, struct ttk_register *f_arg, struct value *s_arg, struct comment *c, struct expr *n);
+void expr_copy(struct expr *orig, struct expr *copy);
+
+struct expr *expr_create_instruction(struct oper *o, struct ttk_register *ttk_reg, struct value *v);
+struct expr *expr_create_instruction_one_arg(struct oper *o, struct value *v);
+struct expr *expr_create_labeled_instruction(struct label *l, struct oper *o, struct ttk_register *ttk_reg, struct value *v);
+struct expr *expr_create_labeled_instruction_one_arg(struct label *l, struct oper *o, struct value *v);
+struct expr *expr_create_compiler_instruction(struct label *l, struct oper *o, struct value *v);
+struct expr *expr_create_compiler_instruction_raw_label_oper_value(char* label, char *o, int value);
+struct expr *expr_create_comment(struct comment *c);
 
 #endif

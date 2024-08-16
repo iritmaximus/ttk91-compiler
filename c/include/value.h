@@ -37,6 +37,17 @@ struct pure_value {
 };
 
 struct value * value_create(addr_mode_t addr_m, index_t i_m, struct pure_value *value, struct ttk_register *i_reg);
+struct value * value_create_direct_value(struct pure_value *p_v);
+struct value * value_create_direct_indexed(struct pure_value *p_v, struct ttk_register *ttk_reg);
+struct value * value_create_address_mode_indexed(char addr_mode, struct pure_value *p_v, struct ttk_register *ttk_reg);
+struct value * value_create_address_mode(char addr_mode, struct pure_value *p_v);
+struct value * value_create_direct_register(struct ttk_register *ttk_reg);
+
+
+struct pure_value * pure_value_create_ttk_register(struct ttk_register *ttk_reg);
+struct pure_value * pure_value_create_value(int value);
+struct pure_value * pure_value_create_label(struct label *l);
+
 struct pure_value * pure_value_create(value_t kind, struct ttk_register *ttk_reg, int num, struct label *l);
 addr_mode_t parse_addr_mode(char addr_mode);
 

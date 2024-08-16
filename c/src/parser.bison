@@ -59,7 +59,7 @@ extern int yylineno;
 %type <num> num_value
 
 %type <name> TOKEN_REGISTER TOKEN_STACK_REGISTER
-%type <name> TOKEN_OPER_DATA TOKEN_OPER_AR TOKEN_OPER_LOGIC TOKEN_OPER_BRANCH TOKEN_OPER_STACK TOKEN_OPER_SYS
+%type <name> TOKEN_OPER_DATA TOKEN_OPER_AR TOKEN_OPER_LOGIC TOKEN_OPER_BRANCH TOKEN_OPER_STACK TOKEN_OPER_SYS TOKEN_COMP_OPER
 %type <name> TOKEN_LABEL TOKEN_SYS_NUM
 %type <character> TOKEN_PAREN_L TOKEN_PAREN_R TOKEN_ADDR_M TOKEN_SIGN
 %type <num>  TOKEN_NUMBER
@@ -70,45 +70,45 @@ extern int yylineno;
 program     : expr_list                         { expr_copy(parse_result, $1); }
             ;
 
-expr_list   : expr_list expr                    { $$ = $2; $2->next = $1; }
+expr_list   : expr expr_list                    { $$ = $1; $1->next = $2; }
             |                                   { $$ = NULL; }
             ;
 
-expr        : oper ttk_register TOKEN_COMMA value               { $$ = expr_create(INSTRUCTION, NULL, $1, $2, $4, NULL, NULL); }
-            | oper value                                        { $$ = expr_create(INSTRUCTION_ONE_ARG, NULL, $1, NULL, $2, NULL, NULL); }
-            | TOKEN_LABEL TOKEN_COMP_OPER num_value             { $$ = expr_create(LABEL_DEF, label_create(LABEL_CONST, $1, 0), NULL, NULL, NULL, NULL, NULL); /* TODO implement this properly */ }
-            | TOKEN_LABEL oper ttk_register TOKEN_COMMA value   { $$ = expr_create(INSTRUCTION, label_create(LABEL_TAG,$1, 0), $2, $3, $5, NULL, NULL); /* TODO FIXME labels have always value 0 */ }
-            | TOKEN_LABEL oper value                            { $$ = expr_create(INSTRUCTION, label_create(LABEL_TAG,$1, 0), $2, NULL, $3, NULL, NULL); }
-            | TOKEN_COMMENT                                     { $$ = expr_create(COMMENT, NULL, NULL, NULL, NULL, comment_create($1), NULL); }
+expr        : oper ttk_register TOKEN_COMMA value               { $$ = expr_create_instruction($1, $2, $4); }
+            | oper value                                        { $$ = expr_create_instruction_one_arg($1, $2); }
+            | TOKEN_LABEL TOKEN_COMP_OPER num_value             { $$ = expr_create_compiler_instruction_raw_label_oper_value($1, $2, $3);  /* TODO implement this properly */ }
+            | TOKEN_LABEL oper ttk_register TOKEN_COMMA value   { $$ = expr_create_labeled_instruction(label_create_tag($1), $2, $3, $5); /* TODO FIXME labels have always value 0 */ }
+            | TOKEN_LABEL oper value                            { $$ = expr_create_labeled_instruction_one_arg(label_create_tag($1), $2, $3); /* TODO FIXME labels have always value 0 */ }
+            | TOKEN_COMMENT                                     { $$ = expr_create_comment(comment_create($1)); }
             ;
 
-oper        : TOKEN_OPER_DATA                   { $$ = oper_create(OPER_DATA, $1); }
-            | TOKEN_OPER_AR                     { $$ = oper_create(OPER_AR, $1); }
-            | TOKEN_OPER_LOGIC                  { $$ = oper_create(OPER_LOGIC, $1); }
-            | TOKEN_OPER_BRANCH                 { $$ = oper_create(OPER_BRANCH, $1); }
-            | TOKEN_OPER_STACK                  { $$ = oper_create(OPER_STACK, $1); }
-            | TOKEN_OPER_SYS                    { $$ = oper_create(OPER_SYS, $1); }
+oper        : TOKEN_OPER_DATA                   { $$ = oper_create_data($1); }
+            | TOKEN_OPER_AR                     { $$ = oper_create_arithmetic($1); }
+            | TOKEN_OPER_LOGIC                  { $$ = oper_create_logic($1); }
+            | TOKEN_OPER_BRANCH                 { $$ = oper_create_branch($1); }
+            | TOKEN_OPER_STACK                  { $$ = oper_create_stack($1); }
+            | TOKEN_OPER_SYS                    { $$ = oper_create_sys($1); }
             ;
 
-ttk_register: TOKEN_REGISTER                    { $$ = ttk_register_create(TTK_REGISTER, $1, 0); }
-            | TOKEN_STACK_REGISTER              { $$ = ttk_register_create(STACK_TTK_REGISTER, $1, 0); }
+ttk_register: TOKEN_REGISTER                    { $$ = ttk_register_create_register($1); }
+            | TOKEN_STACK_REGISTER              { $$ = ttk_register_create_stack_register($1); }
             ;
 
 
-value       : pure_value TOKEN_PAREN_L ttk_register TOKEN_PAREN_R               { $$ = value_create(DIRECT, INDEXED, $1, $3); }
-            | pure_value                                                        { $$ = value_create(DIRECT, NONE, $1, NULL); }
-            | TOKEN_ADDR_M pure_value TOKEN_PAREN_L ttk_register TOKEN_PAREN_R  { $$ = value_create(parse_addr_mode($1), INDEXED, $2, $4); }
-            | TOKEN_ADDR_M pure_value                                           { $$ = value_create(parse_addr_mode($1), NONE, $2, NULL); }
-            | TOKEN_PAREN_L ttk_register TOKEN_PAREN_R                          { $$ = value_create(DIRECT, NONE, NULL, $2); }
+value       : pure_value TOKEN_PAREN_L ttk_register TOKEN_PAREN_R               { $$ = value_create_direct_indexed($1, $3); }
+            | pure_value                                                        { $$ = value_create_direct_value($1); }
+            | TOKEN_ADDR_M pure_value TOKEN_PAREN_L ttk_register TOKEN_PAREN_R  { $$ = value_create_address_mode_indexed($1, $2, $4); }
+            | TOKEN_ADDR_M pure_value                                           { $$ = value_create_address_mode($1, $2); }
+            | TOKEN_PAREN_L ttk_register TOKEN_PAREN_R                          { $$ = value_create_direct_register($2); }
             ;
 
-pure_value  : ttk_register                      { $$ = pure_value_create(REGISTER, $1, 0, NULL); }
-            | num_value                         { $$ = pure_value_create(NUMBER, NULL, $1, NULL); }
-            | label                             { $$ = pure_value_create(LABEL, NULL, 0, $1); }
+pure_value  : ttk_register                      { $$ = pure_value_create_ttk_register($1); }
+            | num_value                         { $$ = pure_value_create_value($1); }
+            | label                             { $$ = pure_value_create_label($1); }
             ;
 
-label       : TOKEN_LABEL                       { $$ = label_create(LABEL_CONST, $1, 0); }
-            | TOKEN_SYS_NUM                     { $$ = label_create(LABEL_CONST, $1, 0); /* TODO FIXME */ }
+label       : TOKEN_LABEL                       { $$ = label_create_const($1); }
+            | TOKEN_SYS_NUM                     { $$ = label_create_const_sys($1); /* TODO FIXME */ }
             ;
 
 

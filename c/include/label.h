@@ -10,10 +10,13 @@ typedef enum {
 
 struct label {
     label_t kind;
-    const char *name;
+    char *name;
     int value;
 };
 
-struct label * label_create(label_t kind, char *name, int value);
+struct label * label_create(label_t kind, char* name, int value);
+struct label * label_create_const(char* name);
+struct label * label_create_const_sys(char* name);
+struct label * label_create_tag(char* name);
 
 #endif

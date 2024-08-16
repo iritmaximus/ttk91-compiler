@@ -13,6 +13,17 @@ struct ttk_register * ttk_register_create(ttk_register_t kind, char* name, int v
     return r;
 }
 
+
+struct ttk_register * ttk_register_create_register(char* name)
+{
+    return ttk_register_create(TTK_REGISTER, name, 0);
+}
+
+struct ttk_register * ttk_register_create_stack_register(char* name)
+{
+    return ttk_register_create(STACK_TTK_REGISTER, name, 0);
+}
+
 int parse_register_num(char* name, ttk_register_t kind)
 {
     if (!name) {

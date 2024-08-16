@@ -1,2 +1,8 @@
+; this is a test file
+;
+; with multiple comments
+
+
+X DS 10
 LOAD R2, @-10(R1); something
 STORE R3, X
