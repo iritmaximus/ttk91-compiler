@@ -1,14 +1,24 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include "error.h"
 #include "ttk_register.h"
 
 struct ttk_register * ttk_register_create(ttk_register_t kind, char* name, int value)
 {
+
+    int id = parse_register_num(name, kind);
+
+    if (id == -1)
+    {
+        printf("Register creation failed.\n");
+        return NULL;
+    }
+
     struct ttk_register * r = malloc(sizeof(*r));
 
     r->kind = kind;
-    r->id = parse_register_num(name, kind);
+    r->id = id;
     r->value = value;
 
     return r;
@@ -28,6 +38,7 @@ struct ttk_register * ttk_register_create_stack_register(char* name)
 int parse_register_num(char* name, ttk_register_t kind)
 {
     if (!name) {
+        printf("Name null while parsing register name.\n");
         return -1;
     }
 
@@ -49,6 +60,7 @@ int parse_register_num(char* name, ttk_register_t kind)
 
         default:
             free(name);
+            printf("Register type not matched while parsing register name.\n");
             return -1;
     }
 
@@ -60,8 +72,8 @@ int ttk_register_print(struct ttk_register *ttk_reg)
 {
     if (!ttk_reg || !ttk_reg->id)
     {
-        printf("ERROR: No ttk_register exists.\n");
-        return 1;
+        printf("ttk_register missing while trying to print it.\n");
+        return VARIABLE_NULL;
     }
     switch (ttk_reg->id)
     {
@@ -71,6 +83,8 @@ int ttk_register_print(struct ttk_register *ttk_reg)
         case 7:
             printf("FP");
             return 0;
+        default:
+            break;
     }
 
     printf("R%d", ttk_reg->id);

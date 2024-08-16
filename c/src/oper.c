@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "error.h"
 #include "oper.h"
 
 
@@ -9,7 +10,7 @@ struct oper * oper_create(oper_t kind, char* oper_name)
     struct oper *o = malloc(sizeof(*o));
 
     o->kind = kind;
-    o->oper_name = oper_name;
+    o->oper_name = oper_name; // TODO rename to just name just like everyone else xd
 
     return o;
 }
@@ -28,7 +29,7 @@ int oper_print(struct oper *o)
     if (!o)
     {
         printf("\nERROR: Null oper given.\n");
-        return 1;
+        return VARIABLE_NULL;
     }
 
     printf("%s", o->oper_name);
@@ -37,6 +38,6 @@ int oper_print(struct oper *o)
 
 void oper_free(struct oper *o)
 {
-    free(o->oper_name);
+    if (o->oper_name) free(o->oper_name);
     free(o);
 }

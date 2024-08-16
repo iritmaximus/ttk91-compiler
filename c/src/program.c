@@ -8,8 +8,9 @@ int program_print(struct expr *program)
 
     while (current != NULL)
     {
-        if (expr_print(current)!=0)
-            return 1;
+        int err = expr_print(current);
+        if (err!=0)
+            return err;
         current = current->next;
     }
 

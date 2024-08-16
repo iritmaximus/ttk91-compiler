@@ -1,6 +1,7 @@
 /* TODO support tags to jump to different sections */
 %{
 #include <stdio.h>
+#include "error.h"
 #include "program.h"
 #include "comment.h"
 #include "expr.h"
@@ -67,8 +68,8 @@ int yyerror(struct expr *e, const char*);
 
 %type <name> TOKEN_REGISTER TOKEN_STACK_REGISTER
 %type <name> TOKEN_OPER_DATA TOKEN_OPER_AR TOKEN_OPER_LOGIC TOKEN_OPER_BRANCH TOKEN_OPER_STACK TOKEN_OPER_SYS TOKEN_COMP_OPER
-%type <name> TOKEN_LABEL TOKEN_SYS_NUM
-%type <character> TOKEN_PAREN_L TOKEN_PAREN_R TOKEN_ADDR_M TOKEN_SIGN
+%type <name> TOKEN_LABEL TOKEN_SYS_NUM TOKEN_ADDR_M
+%type <character> TOKEN_PAREN_L TOKEN_PAREN_R TOKEN_SIGN
 %type <num>  TOKEN_NUMBER
 %type <name> TOKEN_COMMENT
 
@@ -97,8 +98,8 @@ oper        : TOKEN_OPER_DATA                   { $$ = oper_create_data($1); }
             | TOKEN_OPER_SYS                    { $$ = oper_create_sys($1); }
             ;
 
-ttk_register: TOKEN_REGISTER                    { $$ = ttk_register_create_register($1); }
-            | TOKEN_STACK_REGISTER              { $$ = ttk_register_create_stack_register($1); }
+ttk_register: TOKEN_REGISTER                    { $$ = ttk_register_create_register($1); if (!$$) { yyerror(parse_result, "Token empty"); YYERROR;} }
+            | TOKEN_STACK_REGISTER              { $$ = ttk_register_create_stack_register($1); if (!$$) { yyerror(parse_result, "Token empty"); YYERROR;} }
             ;
 
 
@@ -127,6 +128,6 @@ num_value   : TOKEN_SIGN TOKEN_NUMBER           { $$ = -$2; }
 
 int yyerror ( struct expr *e, const char *s )
 {
-    printf("ERROR: Parser error: %s at line %d\n", s, yylineno);
-    return 1;
+    printf("Parser error: %s at line %d\n", s, yylineno);
+    return PARSE_ERROR;
 }

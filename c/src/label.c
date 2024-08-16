@@ -1,6 +1,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
+#include "error.h"
 #include "label.h"
 
 
@@ -27,7 +28,7 @@ int label_print(struct label *l)
     if (!l->name)
     {
         printf("ERROR: Label name doesn't exist.\n");
-        return 1;
+        return VARIABLE_NULL;
     }
 
     printf("%s", l->name);
@@ -36,6 +37,6 @@ int label_print(struct label *l)
 
 void label_free(struct label *l)
 {
-    free(l->name);
+    if (l->name) free(l->name);
     free(l);
 }

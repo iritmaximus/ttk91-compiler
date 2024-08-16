@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "error.h"
 #include "expr.h"
 
 #define PRINT_COMMENTS 1
@@ -63,69 +64,86 @@ struct expr *expr_create_comment(struct comment *c)
 int expr_print(struct expr *e)
 {
     if (!e)
-        return 1;
+        return VARIABLE_NULL;
 
     switch (e->kind)
     {
         case INSTRUCTION:
+        {
             if (e->label)
             {
-                if (label_print(e->label)!=0)
-                    return 1;;
+                int err = label_print(e->label);
+                if (err)
+                    return err;
                 printf(" ");
             }
 
-            if (oper_print(e->oper)!=0)
-                return 1;
+            int err = oper_print(e->oper);
+            if (err)
+                return err;
             printf(" ");
-            if (ttk_register_print(e->first_arg)!=0)
-                return 1;
+            err = ttk_register_print(e->first_arg);
+            if (err)
+                return err;
             printf(",");
             printf(" ");
-            if (value_print(e->second_arg)!=0)
-                return 1;
+            err = value_print(e->second_arg);
+            if (err)
+                return err;
             printf("\n");
             return 0;
+        }
 
         case INSTRUCTION_ONE_ARG:
+        {
             if (e->label)
             {
-                if (label_print(e->label)!=0)
-                    return 1;
+                int err = label_print(e->label);
+                if (err)
+                    return err;
                 printf(" ");
             }
 
-            if (oper_print(e->oper)!=0)
-                return 1;
+            int err = oper_print(e->oper);
+            if (err)
+                return err;
             printf(" ");
-            if (value_print(e->second_arg)!=0)
-                return 1;
+            err = value_print(e->second_arg);
+            if (err)
+                return err;
             printf("\n");
             return 0;
+        }
 
         case LABEL_DEF:
-            if (label_print(e->label)!=0)
-                return 1;
+        {
+            int err = label_print(e->label);
+            if (err)
+                return err;
             printf(" ");
-            if (oper_print(e->oper)!=0)
-                return 1;
+            err = oper_print(e->oper);
+            if (err)
+                return err;
             printf(" ");
-            if (value_print(e->second_arg)!=0)
-                return 1;
+            err = value_print(e->second_arg);
+            if (err)
+                return err;
             printf("\n");
             return 0;
+        }
 
         case COMMENT:
-            if (PRINT_COMMENTS == 1)
+            if (PRINT_COMMENTS)
                 return 0;
 
-            if (comment_print(e->comment)!=0)
-                return 1;
+            int err = comment_print(e->comment);
+            if (err)
+                return err;
             printf("\n");
             return 0;
 
         default:
-            return 1;
+            return SWITCH_NOT_MATCHED;
     }
 
 }
@@ -146,33 +164,31 @@ int expr_free(struct expr *e)
     switch (e->kind)
     {
         case INSTRUCTION:
-            if (e->label != NULL)
-                label_free(e->label);
-            oper_free(e->oper);
-            ttk_register_free(e->first_arg);
-            value_free(e->second_arg);
+            if (e->label) label_free(e->label);
+            if (e->oper) oper_free(e->oper);
+            if (e->first_arg) ttk_register_free(e->first_arg);
+            if (e->second_arg) value_free(e->second_arg);
             break;
 
         case INSTRUCTION_ONE_ARG:
-            if (e->label != NULL)
-                label_free(e->label);
-            oper_free(e->oper);
-            value_free(e->second_arg);
+            if (e->label) label_free(e->label);
+            if (e->oper) oper_free(e->oper);
+            if (e->second_arg) value_free(e->second_arg);
             break;
 
         case LABEL_DEF:
-            label_free(e->label);
-            oper_free(e->oper);
-            value_free(e->second_arg);
+            if (e->label) label_free(e->label);
+            if (e->oper) oper_free(e->oper);
+            if (e->second_arg) value_free(e->second_arg);
             break;
 
         case COMMENT:
-            comment_free(e->comment);
+            if (e->comment) comment_free(e->comment);
             break;
 
         default:
             printf("ERROR: Expr kind not matched while freeing\n");
-            return 1;
+            return SWITCH_NOT_MATCHED;
     }
 
     return 0;

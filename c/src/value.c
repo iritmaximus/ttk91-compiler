@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include "error.h"
 #include "value.h"
 
 
@@ -31,12 +32,12 @@ struct value * value_create_direct_indexed(struct pure_value *p_v, struct ttk_re
     return value_create(DIRECT, INDEXED, p_v, ttk_reg);
 }
 
-struct value * value_create_address_mode_indexed(char addr_mode, struct pure_value *p_v, struct ttk_register *ttk_reg)
+struct value * value_create_address_mode_indexed(char* addr_mode, struct pure_value *p_v, struct ttk_register *ttk_reg)
 {
     return value_create(parse_addr_mode(addr_mode), INDEXED, p_v, ttk_reg);
 }
 
-struct value * value_create_address_mode(char addr_mode, struct pure_value *p_v)
+struct value * value_create_address_mode(char* addr_mode, struct pure_value *p_v)
 {
     return value_create(parse_addr_mode(addr_mode), NONE, p_v, NULL);
 }
@@ -60,9 +61,11 @@ struct pure_value * pure_value_create_value(int value)                          
 struct pure_value * pure_value_create_label(struct label *l)                        { return pure_value_create(LABEL, NULL, 0, l); }
 
 
-addr_mode_t parse_addr_mode(char addr_mode)
+addr_mode_t parse_addr_mode(char* addr_mode)
 {
-    switch (addr_mode)
+    if (!addr_mode)
+        return -1;
+    switch (addr_mode[0])
     {
         case '=':
             return IMMEDIATE;
@@ -79,23 +82,25 @@ int pure_value_print(struct pure_value *p_v)
     if (!p_v)
     {
         printf("\nERROR: Pure_value does not exist\n");
-        return 1;
+        return VARIABLE_NULL;
     }
 
     switch (p_v->kind)
     {
         case REGISTER:
             ttk_register_print(p_v->ttk_register);
-            return 0;
+            break;
         case NUMBER:
             printf("%d", p_v->number);
-            return 0;
+            break;
         case LABEL:
             label_print(p_v->label);
-            return 0;
+            break;
+        default:
+            return SWITCH_NOT_MATCHED;
     }
 
-    return 1;
+    return 0;
 }
 
 int value_print(struct value *v)
@@ -104,7 +109,7 @@ int value_print(struct value *v)
     if (!v)
     {
         printf("ERROR: Value not defined.\n");
-        return 1;
+        return VARIABLE_NULL;
     }
 
     // add = or @ to the beginnig of value
@@ -123,26 +128,39 @@ int value_print(struct value *v)
     switch (v->indexing_mode)
     {
         case NONE:
-            if (pure_value_print(v->value)!=0)
-                return 1;
-            return 0;
+        {
+            int err = pure_value_print(v->value);
+            if (err)
+                return err;
+            break;
+        }
         case INDEXED:
-            if (pure_value_print(v->value)!=0)
-                return 1;
+        {
+            int err = pure_value_print(v->value);
+            if (err)
+                return err;
             printf("(");
-            if (ttk_register_print(v->index_register)!=0)
-                return 1;
+            err = ttk_register_print(v->index_register); // is already defined
+            if (err)
+                return err;
             printf(")");
-            return 0;
+            break;
+
+        }
         case INDEXED_ONLY_IREG:
+        {
             printf("(");
-            if (ttk_register_print(v->index_register)!=0)
-                return 1;
+            int err = ttk_register_print(v->index_register);
+            if (err)
+                return err;
             printf(")");
-            return 0;
+            break;
+        }
+        default:
+            return SWITCH_NOT_MATCHED;
     }
 
-    return 1;
+    return 0;
 }
 
 void pure_value_free(struct pure_value *p_v)
@@ -150,12 +168,12 @@ void pure_value_free(struct pure_value *p_v)
     switch (p_v->kind)
     {
         case REGISTER:
-            ttk_register_free(p_v->ttk_register);
+            if (p_v->ttk_register) ttk_register_free(p_v->ttk_register);
             break;
         case NUMBER:
             break;
         case LABEL:
-            label_free(p_v->label);
+            if (p_v->label) label_free(p_v->label);
             break;
     }
     free(p_v);
@@ -166,15 +184,15 @@ void value_free(struct value *v)
     switch (v->indexing_mode)
     {
         case NONE:
-            pure_value_free(v->value);
+            if (v->value) pure_value_free(v->value);
             break;
         case INDEXED:
-            pure_value_free(v->value);
-            ttk_register_free(v->index_register);
+            if (v->value) pure_value_free(v->value);
+            if (v->index_register) ttk_register_free(v->index_register);
             break;
         default:
-            printf("ERROR: Value indexing mode not matched while freeing\n");
-            break;;
+            printf("ERROR: Indexing mode not matched while freeing value\n");
+            break;
     }
     free(v);
 }
