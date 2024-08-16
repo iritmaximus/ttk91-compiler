@@ -15,8 +15,7 @@ FILES=$(SRCDIR)/main.c \
 	  $(SRCDIR)/value.c
 
 scanner: 
-	# this is case insensitive!!
-	flex -i -o $(SRCDIR)/scanner.c $(SRCDIR)/scanner.flex
+	flex -o $(SRCDIR)/scanner.c $(SRCDIR)/scanner.flex
 
 parser:
 	bison --defines=$(INCLUDEDIR)/token.h --output=$(SRCDIR)/parser.c $(SRCDIR)/parser.bison -Wcounterexamples --debug -t
