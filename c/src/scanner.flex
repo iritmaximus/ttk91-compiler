@@ -10,6 +10,9 @@ char* copy_yytext(char* orig);
 %}
 
 %option yylineno
+/* https://stackoverflow.com/questions/39075510/option-noinput-nounput-what-are-they-for */
+%option nounput
+%option noinput
 
 %%
 ;.*$                            { yylval.name = copy_yytext(yytext); return TOKEN_COMMENT; }
