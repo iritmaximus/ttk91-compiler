@@ -15,6 +15,23 @@ extern char *yytext;
 // parser
 extern int yyparse();
 
+
+int program_print(struct expr *program)
+{
+    struct expr *current = program;
+
+    do
+    {
+        if (expr_print(current)!=0)
+            return 1;
+        current = current->next;
+    }
+    while (current->next != NULL);
+
+    return 0;
+
+}
+
 int main()
 {
     yyin = fopen(FILENAME, "r");
@@ -38,6 +55,10 @@ int main()
         printf("Parse failed\n");
         return 1;
     }
+
+    if (program_print(parse_result)!=0)
+        return 1;
+    // TODO handle all frees
 
     return 0;
 }

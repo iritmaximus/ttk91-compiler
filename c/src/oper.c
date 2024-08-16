@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include <stdio.h>
 #include "oper.h"
 
 
@@ -20,3 +21,16 @@ struct oper * oper_create_branch(char* oper_name)       { return oper_create(OPE
 struct oper * oper_create_stack(char* oper_name)        { return oper_create(OPER_STACK, oper_name); }
 struct oper * oper_create_sys(char* oper_name)          { return oper_create(OPER_SYS, oper_name); }
 struct oper * oper_create_compiler(char* oper_name)     { return oper_create(OPER_COMPILER, oper_name); }
+
+
+int oper_print(struct oper *o)
+{
+    if (!o)
+    {
+        printf("\nERROR: Null oper given.\n");
+        return 1;
+    }
+
+    printf("%s", o->oper_name);
+    return 0;
+}

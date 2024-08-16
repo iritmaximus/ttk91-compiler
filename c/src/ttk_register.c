@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
 #include "ttk_register.h"
 
@@ -45,4 +46,25 @@ int parse_register_num(char* name, ttk_register_t kind)
 
     return -1; // error, shouldn't end up here.
 
+}
+
+int ttk_register_print(struct ttk_register *ttk_reg)
+{
+    if (!ttk_reg || !ttk_reg->id)
+    {
+        printf("ERROR: No ttk_register exists.\n");
+        return 1;
+    }
+    switch (ttk_reg->id)
+    {
+        case 6:
+            printf("SP");
+            return 0;
+        case 7:
+            printf("FP");
+            return 0;
+    }
+
+    printf("R%d", ttk_reg->id);
+    return 0;
 }

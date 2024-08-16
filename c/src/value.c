@@ -1,4 +1,5 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "value.h"
 
 
@@ -71,10 +72,75 @@ addr_mode_t parse_addr_mode(char addr_mode)
 
     return DIRECT;
 }
+
+
+int pure_value_print(struct pure_value *p_v)
+{
+    if (!p_v)
     {
-        return INDIRECT;
-    } 
-    else {
-        return DIRECT;
+        printf("\nERROR: Pure_value does not exist\n");
+        return 1;
     }
+
+    switch (p_v->kind)
+    {
+        case REGISTER:
+            ttk_register_print(p_v->ttk_register);
+            return 0;
+        case NUMBER:
+            printf("%d", p_v->number);
+            return 0;
+        case LABEL:
+            label_print(p_v->label);
+            return 0;
+    }
+
+    return 1;
+}
+
+int value_print(struct value *v)
+{
+
+    if (!v)
+    {
+        printf("ERROR: Value not defined.\n");
+        return 1;
+    }
+
+    // add = or @ to the beginnig of value
+    switch (v->addr_mode)
+    {
+        case IMMEDIATE:
+            printf("=");
+            break;
+        case INDIRECT:
+            printf("@");
+            break;
+        case DIRECT:
+            break;
+    }
+
+    switch (v->indexing_mode)
+    {
+        case NONE:
+            if (pure_value_print(v->value)!=0)
+                return 1;
+            return 0;
+        case INDEXED:
+            if (pure_value_print(v->value)!=0)
+                return 1;
+            printf("(");
+            if (ttk_register_print(v->index_register)!=0)
+                return 1;
+            printf(")");
+            return 0;
+        case INDEXED_ONLY_IREG:
+            printf("(");
+            if (ttk_register_print(v->index_register)!=0)
+                return 1;
+            printf(")");
+            return 0;
+    }
+
+    return 1;
 }

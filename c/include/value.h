@@ -50,5 +50,6 @@ struct pure_value * pure_value_create_label(struct label *l);
 
 struct pure_value * pure_value_create(value_t kind, struct ttk_register *ttk_reg, int num, struct label *l);
 addr_mode_t parse_addr_mode(char addr_mode);
+int value_print(struct value *v);
 
 #endif

@@ -17,4 +17,6 @@ int parse_register_num(char *name, ttk_register_t kind);
 struct ttk_register * ttk_register_create_register(char* name);
 struct ttk_register * ttk_register_create_stack_register(char* name);
 
+int ttk_register_print(struct ttk_register *ttk_reg);
+
 #endif
