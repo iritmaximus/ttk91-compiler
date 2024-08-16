@@ -7,6 +7,7 @@ INCLUDEDIR=include
 FILES=$(SRCDIR)/main.c \
 	  $(SRCDIR)/scanner.c \
 	  $(SRCDIR)/parser.c \
+	  $(SRCDIR)/program.c \
 	  $(SRCDIR)/expr.c \
 	  $(SRCDIR)/label.c \
 	  $(SRCDIR)/ttk_register.c \

@@ -33,3 +33,9 @@ int label_print(struct label *l)
     printf("%s", l->name);
     return 0;
 }
+
+void label_free(struct label *l)
+{
+    free(l->name);
+    free(l);
+}

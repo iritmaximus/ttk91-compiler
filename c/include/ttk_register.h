@@ -19,4 +19,6 @@ struct ttk_register * ttk_register_create_stack_register(char* name);
 
 int ttk_register_print(struct ttk_register *ttk_reg);
 
+void ttk_register_free(struct ttk_register *ttk_reg);
+
 #endif

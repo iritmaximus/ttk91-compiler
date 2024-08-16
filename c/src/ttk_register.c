@@ -31,21 +31,29 @@ int parse_register_num(char* name, ttk_register_t kind)
         return -1;
     }
 
+    int value;
+
     switch (kind)
     {
         case TTK_REGISTER:
             char num = name[1]; // registers have the format RX, 'R' + X 0-7
-            return num - '0';
+            value = num - '0';
+            break;
         case STACK_TTK_REGISTER:
             if (strcasecmp("sp", name) == 0)
-                return 6;
-            if (strcasecmp("fp", name) == 0)
-                return 7;
+                value = 6;
 
+            if (strcasecmp("fp", name) == 0)
+                value = 7;
+            break;
+
+        default:
+            free(name);
+            return -1;
     }
 
-    return -1; // error, shouldn't end up here.
-
+    free(name);
+    return value;
 }
 
 int ttk_register_print(struct ttk_register *ttk_reg)
@@ -67,4 +75,9 @@ int ttk_register_print(struct ttk_register *ttk_reg)
 
     printf("R%d", ttk_reg->id);
     return 0;
+}
+
+void ttk_register_free(struct ttk_register *ttk_reg)
+{
+    free(ttk_reg);
 }

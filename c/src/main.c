@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "token.h"
-#include "expr.h"
+#include "program.h"
 
 #define FILENAME "../docs/example-file-harder.k91"
 //#define FILENAME "../docs/example-file.k91"
@@ -16,21 +16,6 @@ extern char *yytext;
 extern int yyparse();
 
 
-int program_print(struct expr *program)
-{
-    struct expr *current = program;
-
-    do
-    {
-        if (expr_print(current)!=0)
-            return 1;
-        current = current->next;
-    }
-    while (current->next != NULL);
-
-    return 0;
-
-}
 
 int main()
 {
@@ -53,12 +38,15 @@ int main()
         printf("Parse succesful :)\n");
     } else {
         printf("Parse failed\n");
+        program_free(parse_result);
         return 1;
     }
 
     if (program_print(parse_result)!=0)
         return 1;
-    // TODO handle all frees
+
+    program_free(parse_result);
+    // TODO handle errors with assertions
 
     return 0;
 }

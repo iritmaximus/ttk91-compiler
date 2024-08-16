@@ -25,3 +25,9 @@ int comment_print(struct comment *c)
     return 0;
 
 }
+
+void comment_free(struct comment *c)
+{
+    free(c->text);
+    free(c);
+}

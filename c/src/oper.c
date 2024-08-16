@@ -34,3 +34,9 @@ int oper_print(struct oper *o)
     printf("%s", o->oper_name);
     return 0;
 }
+
+void oper_free(struct oper *o)
+{
+    free(o->oper_name);
+    free(o);
+}

@@ -140,3 +140,40 @@ void expr_copy(struct expr *orig, struct expr *copy)
     orig->comment = copy->comment;
     orig->next = copy->next;
 }
+
+int expr_free(struct expr *e)
+{
+    switch (e->kind)
+    {
+        case INSTRUCTION:
+            if (e->label != NULL)
+                label_free(e->label);
+            oper_free(e->oper);
+            ttk_register_free(e->first_arg);
+            value_free(e->second_arg);
+            break;
+
+        case INSTRUCTION_ONE_ARG:
+            if (e->label != NULL)
+                label_free(e->label);
+            oper_free(e->oper);
+            value_free(e->second_arg);
+            break;
+
+        case LABEL_DEF:
+            label_free(e->label);
+            oper_free(e->oper);
+            value_free(e->second_arg);
+            break;
+
+        case COMMENT:
+            comment_free(e->comment);
+            break;
+
+        default:
+            printf("ERROR: Expr kind not matched while freeing\n");
+            return 1;
+    }
+
+    return 0;
+}

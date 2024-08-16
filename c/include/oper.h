@@ -29,4 +29,6 @@ struct oper * oper_create_stack(char* oper_name);
 struct oper * oper_create_sys(char* oper_name);
 struct oper * oper_create_compiler(char* oper_name);
 
+void oper_free(struct oper *o);
+
 #endif

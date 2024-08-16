@@ -21,4 +21,6 @@ struct label * label_create_const(char* name);
 struct label * label_create_const_sys(char* name);
 struct label * label_create_tag(char* name);
 
+void label_free(struct label *l);
+
 #endif

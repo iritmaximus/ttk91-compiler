@@ -1,6 +1,7 @@
 /* TODO support tags to jump to different sections */
 %{
 #include <stdio.h>
+#include "program.h"
 #include "comment.h"
 #include "expr.h"
 #include "label.h"
@@ -8,6 +9,12 @@
 #include "value.h"
 
 extern int yylineno;
+
+// implicit declaration of function ‘yylex’
+int yylex();
+
+// implicit declaration of function ‘yyerror’
+int yyerror(struct expr *e, const char*);
 %}
 
 
@@ -118,7 +125,7 @@ num_value   : TOKEN_SIGN TOKEN_NUMBER           { $$ = -$2; }
 
 %%
 
-int yyerror ( const char *s )
+int yyerror ( struct expr *e, const char *s )
 {
     printf("ERROR: Parser error: %s at line %d\n", s, yylineno);
     return 1;

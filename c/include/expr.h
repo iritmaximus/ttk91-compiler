@@ -37,4 +37,6 @@ struct expr *expr_create_compiler_instruction(struct label *l, struct oper *o, s
 struct expr *expr_create_compiler_instruction_raw_label_oper_value(char* label, char *o, int value);
 struct expr *expr_create_comment(struct comment *c);
 
+int expr_free(struct expr *e);
+
 #endif

@@ -9,4 +9,6 @@ struct comment {
 struct comment * comment_create(char *text);
 int comment_print(struct comment *c);
 
+void comment_free(struct comment *c);
+
 #endif

@@ -52,4 +52,8 @@ struct pure_value * pure_value_create(value_t kind, struct ttk_register *ttk_reg
 addr_mode_t parse_addr_mode(char addr_mode);
 int value_print(struct value *v);
 
+
+void value_free(struct value *v);
+void pure_value_free(struct pure_value *p_v);
+
 #endif

@@ -144,3 +144,37 @@ int value_print(struct value *v)
 
     return 1;
 }
+
+void pure_value_free(struct pure_value *p_v)
+{
+    switch (p_v->kind)
+    {
+        case REGISTER:
+            ttk_register_free(p_v->ttk_register);
+            break;
+        case NUMBER:
+            break;
+        case LABEL:
+            label_free(p_v->label);
+            break;
+    }
+    free(p_v);
+}
+
+void value_free(struct value *v)
+{
+    switch (v->indexing_mode)
+    {
+        case NONE:
+            pure_value_free(v->value);
+            break;
+        case INDEXED:
+            pure_value_free(v->value);
+            ttk_register_free(v->index_register);
+            break;
+        default:
+            printf("ERROR: Value indexing mode not matched while freeing\n");
+            break;;
+    }
+    free(v);
+}
