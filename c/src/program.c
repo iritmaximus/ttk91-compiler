@@ -22,9 +22,11 @@ void program_free(struct expr *program)
 {
     struct expr *current = program;
 
+    // TODO: Error checking
     while (current != NULL)
     {
+        struct expr *next = current->next;
         expr_free(current);
-        current = current->next;
+        current = next;
     }
 }

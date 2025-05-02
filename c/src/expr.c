@@ -191,5 +191,6 @@ int expr_free(struct expr *e)
             return SWITCH_NOT_MATCHED;
     }
 
+    free(e);
     return 0;
 }
