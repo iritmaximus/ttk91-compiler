@@ -36,6 +36,87 @@ int oper_print(struct oper *o)
     return 0;
 }
 
+int oper_print_intel_asm(struct oper *o)
+{
+    if (!o)
+    {
+        printf("ERROR: Null oper given.\n");
+        return VARIABLE_NULL;
+    }
+
+    switch (o->kind)
+    {
+        case OPER_DATA:
+        {
+            if (strcasecmp("LOAD", o->oper_name) == 0)
+                printf("mov");
+            else if (strcasecmp("STORE", o->oper_name) == 0)
+                printf("mov");
+            else if (strcasecmp("IN", o->oper_name) == 0)
+                printf("\"IN\"");
+            else if (strcasecmp("OUT", o->oper_name) == 0)
+                printf("\"OUT\"");
+            break;
+        }
+
+        case OPER_AR:
+        {
+            if (strcasecmp("ADD", o->oper_name) == 0)
+                printf("add");
+            else if (strcasecmp("SUB", o->oper_name) == 0)
+                printf("sub");
+            else if (strcasecmp("MUL", o->oper_name) == 0)
+                printf("mul");
+            else if (strcasecmp("DIV", o->oper_name) == 0)
+                printf("div");
+            else
+                printf("\"%s\"", o->oper_name);
+            break;
+        }
+
+        case OPER_COMPILER:
+        {
+            if (strcasecmp("DEF", o->oper_name) == 0)
+                printf("\"%s\"", o->oper_name);
+            else
+                printf("dw");
+            break;
+        }
+
+        case OPER_LOGIC:
+        {
+            printf("\"%s\"", o->oper_name);
+            break;
+        }
+
+        case OPER_BRANCH:
+        {
+            printf("\"%s\"", o->oper_name);
+            break;
+        }
+
+        case OPER_STACK:
+        {
+            printf("\"%s\"", o->oper_name);
+            break;
+        }
+
+        case OPER_SYS:
+        {
+            printf("\"%s\"", o->oper_name);
+            break;
+        }
+
+        default:
+        {
+            return SWITCH_NOT_MATCHED;
+        }
+    }
+
+
+    return 0;
+}
+
 void oper_free(struct oper *o)
 {
     if (o->oper_name) free(o->oper_name);

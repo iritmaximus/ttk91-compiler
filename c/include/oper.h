@@ -20,6 +20,7 @@ struct oper {
 
 struct oper * oper_create(oper_t kind, char* oper_name);
 int oper_print(struct oper *o);
+int oper_print_intel_asm(struct oper *o);
 
 struct oper * oper_create_data(char* oper_name);
 struct oper * oper_create_arithmetic(char* oper_name);

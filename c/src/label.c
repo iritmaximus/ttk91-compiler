@@ -23,6 +23,11 @@ struct label * label_create_const(char* name)       { return label_create(LABEL_
 struct label * label_create_const_sys(char* name)   { return label_create(LABEL_CONST, name,  0); } // FIXME value
 struct label * label_create_tag(char* name)         { return label_create(LABEL_TAG, name, 0); } // FIXME also this
 
+int label_print_intel_asm(struct label *l)
+{
+    return label_print(l);
+}
+
 int label_print(struct label *l)
 {
     if (!l->name)

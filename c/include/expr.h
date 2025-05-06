@@ -26,6 +26,7 @@ struct expr {
 
 struct expr * expr_create(expr_t kind, struct label *l, struct oper *o, struct ttk_register *f_arg, struct value *s_arg, struct comment *c, struct expr *n);
 int expr_print(struct expr *e);
+int expr_print_intel_asm(struct expr *e);
 
 void expr_copy(struct expr *orig, struct expr *copy);
 

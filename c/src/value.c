@@ -76,6 +76,77 @@ addr_mode_t parse_addr_mode(char* addr_mode)
     return DIRECT;
 }
 
+int pure_value_print_intel_asm(struct pure_value *p_v)
+{
+    return pure_value_print(p_v);
+}
+
+int value_print_intel_asm(struct value *v)
+{
+    if (!v)
+    {
+        printf("ERROR: Value not defined.\n");
+        return VARIABLE_NULL;
+    }
+
+    if (v->indexing_mode == NONE)
+    {
+        switch (v->addr_mode)
+        {
+            case IMMEDIATE:
+            {
+                int err = pure_value_print_intel_asm(v->value);
+                if (err!=0)
+                    return err;
+                break;
+            } 
+
+            case DIRECT:
+            case INDIRECT:
+            {
+                if (v->value && v->value->kind != NUMBER)
+                {
+                    int err = pure_value_print_intel_asm(v->value);
+                    if (err!=0)
+                        return err;
+                }
+                else {
+                    printf("[");
+                    int err = pure_value_print_intel_asm(v->value);
+                    if (err!=0)
+                        return err;
+                    printf("]");
+                }
+
+                break;
+            }
+        }
+    }
+    else if (v->indexing_mode == INDEXED)
+    {
+        switch (v->addr_mode)
+        {
+            case IMMEDIATE:
+            {
+                printf("[");
+                int err = ttk_register_print_intel_asm(v->index_register);
+                if (err!=0)
+                    return err;
+
+                printf(" + ");
+
+                err = pure_value_print_intel_asm(v->value);
+                if (err!=0)
+                    return err;
+                printf("]");
+            }
+        }
+    }
+    else
+        return SWITCH_NOT_MATCHED;
+
+    return 0;
+}
 
 int pure_value_print(struct pure_value *p_v)
 {

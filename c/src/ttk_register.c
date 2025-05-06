@@ -68,6 +68,48 @@ int parse_register_num(char* name, ttk_register_t kind)
     return value;
 }
 
+int ttk_register_print_intel_asm(struct ttk_register *ttk_reg)
+{
+    // EAX, EBX, ECX, EDX, ESP, EBP, ESI, EDI
+    if (!ttk_reg || !ttk_reg->id)
+    {
+        printf("ttk_register missing while trying to print it.\n");
+        return VARIABLE_NULL;
+    }
+
+    switch (ttk_reg->id)
+    {
+        case 1:
+            printf("eax");
+            break;
+        case 2:
+            printf("ebx");
+            break;
+        case 3:
+            printf("ecx");
+            break;
+        case 4:
+            printf("edx");
+            break;
+        case 5:
+            printf("esp");
+            break;
+        case 6:
+            printf("ebp");
+            break;
+        case 7:
+            printf("esi");
+            break;
+        case 0:
+            printf("edi"); // TODO: this is possibly not correct
+            break;
+        default:
+            printf("ERROR: No matching register\n");
+            return SWITCH_NOT_MATCHED;
+    }
+    return 0;
+}
+
 int ttk_register_print(struct ttk_register *ttk_reg)
 {
     if (!ttk_reg || !ttk_reg->id)

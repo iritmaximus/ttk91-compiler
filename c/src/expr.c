@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #include "error.h"
 #include "expr.h"
 
@@ -59,6 +60,98 @@ struct expr *expr_create_compiler_instruction_raw_label_oper_value(char* label, 
 struct expr *expr_create_comment(struct comment *c)
 {
     return expr_create(COMMENT, NULL, NULL, NULL, NULL, c, NULL);
+}
+
+int expr_print_intel_asm(struct expr *e)
+{
+    // TODO: Delve deeper into this. This works a bit differently than ttk91
+    // For ex. LOAD R1, =2(R2) needs to be translated into multiple instructions in assembly.
+
+    if (!e)
+        return VARIABLE_NULL;
+
+    switch (e->kind)
+    {
+        case INSTRUCTION:
+        {
+            if (e->label)
+                printf("\"LABEL\"");
+
+            // operator
+            int err = oper_print_intel_asm(e->oper);
+            if (err!=0)
+                return err;
+
+            printf(" ");
+
+            // If oper is STORE switch arguments around
+            if (e->oper && strcasecmp("STORE", e->oper->oper_name) == 0)
+            {
+                // Second argument
+                int err = value_print_intel_asm(e->second_arg);
+                if (err!=0)
+                    return err;
+
+                printf(", ");
+
+                // First argument
+                err = ttk_register_print_intel_asm(e->first_arg);
+                if (err!=0)
+                    return err;
+            } 
+            else
+            {
+                // first argument
+                err = ttk_register_print_intel_asm(e->first_arg);
+                if (err!=0)
+                    return err;
+
+                printf(", ");
+
+                // second argument
+                err = value_print_intel_asm(e->second_arg);
+                if (err!=0)
+                    return err;
+            }
+
+            printf("\n");
+            break;
+        }
+
+        case LABEL_DEF:
+        {
+            int err = label_print_intel_asm(e->label);
+            if (err)
+                return err;
+            printf(" ");
+
+            err = oper_print_intel_asm(e->oper);
+            if (err)
+                return err;
+            printf(" ");
+
+            if (!e->second_arg)
+                return VARIABLE_NULL;
+            err = pure_value_print_intel_asm(e->second_arg->value);
+            if (err)
+                return err;
+
+            printf("\n");
+            break;
+        }
+
+        case COMMENT:
+        {
+            // Comments are skipped.
+            break;
+        }
+
+        default:
+            printf("NOT IMPLEMENTED %d\n", e->kind);
+            break;
+    }
+    
+    return 0;
 }
 
 int expr_print(struct expr *e)
