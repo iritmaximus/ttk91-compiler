@@ -1,3 +1,6 @@
 .stack-work/
 *~
 __pycache__
+.vscode
+compile_commands.json
+.cache
