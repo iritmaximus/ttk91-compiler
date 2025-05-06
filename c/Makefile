@@ -23,3 +23,6 @@ parser:
 
 all: scanner parser
 	$(CC) $(CC_FLAGS) -I$(INCLUDEDIR) $(FILES) -o compiler
+
+clean:
+	rm $(SRCDIR)/*.o compiler
