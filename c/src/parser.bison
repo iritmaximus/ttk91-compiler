@@ -79,7 +79,7 @@ program     : expr_list                         { expr_copy(parse_result, $1); }
             ;
 
 expr_list   : expr expr_list                    { $$ = $1; $1->next = $2; }
-            |                                   { $$ = NULL; }
+            |                            %empty { $$ = NULL; }
             ;
 
 expr        : oper ttk_register TOKEN_COMMA value               { $$ = expr_create_instruction($1, $2, $4); }
