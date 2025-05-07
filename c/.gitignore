@@ -4,3 +4,4 @@ parser.output
 scanner.c
 
 .vscode
+build
