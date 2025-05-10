@@ -1,6 +1,7 @@
 #ifndef LABEL_H
 #define LABEL_H
 
+#include <stddef.h>
 #include "expr.h"
 
 typedef enum {
@@ -15,6 +16,7 @@ struct label {
 };
 
 struct label * label_create(label_t kind, char* name, int value);
+int label_to_string(char* buffer, const size_t size, struct label *l);
 int label_print_intel_asm(struct label *l);
 int label_print(struct label *l);
 
