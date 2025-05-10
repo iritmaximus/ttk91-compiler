@@ -5,7 +5,7 @@
 #include "program.h"
 
 // #define FILENAME "../docs/example-file-harder.k91"
-#define FILENAME "../docs/example-file.k91"
+#define FILENAME "../../docs/example-file.k91"
 // #define FILENAME "../docs/example-file-simple.k91"
 
 // scanner
