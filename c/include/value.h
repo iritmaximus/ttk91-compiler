@@ -50,7 +50,9 @@ struct pure_value * pure_value_create_label(struct label *l);
 
 struct pure_value * pure_value_create(value_t kind, struct ttk_register *ttk_reg, int num, struct label *l);
 addr_mode_t parse_addr_mode(char* addr_mode);
+int pure_value_to_string(char *buffer, size_t size, struct pure_value *p_v);
 int pure_value_print(struct pure_value *p_v);
+int value_to_string(char *buffer, size_t size, struct value *v);
 int value_print(struct value *v);
 int pure_value_print_intel_asm(struct pure_value *p_v);
 int value_print_intel_asm(struct value *v);

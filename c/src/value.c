@@ -1,5 +1,8 @@
 #include <stdlib.h>
 #include <stdio.h>
+#include <assert.h>
+#include <stdbool.h>
+#include <string.h>
 #include "error.h"
 #include "value.h"
 
@@ -65,15 +68,19 @@ addr_mode_t parse_addr_mode(char* addr_mode)
 {
     if (!addr_mode)
         return -1;
+
     switch (addr_mode[0])
     {
         case '=':
             return IMMEDIATE;
         case '@':
             return INDIRECT;
+        default:
+            return DIRECT;
     }
 
-    return DIRECT;
+    printf("ERROR: How on earth you got here...\n");
+    return -1;
 }
 
 int pure_value_print_intel_asm(struct pure_value *p_v)
@@ -150,32 +157,54 @@ int value_print_intel_asm(struct value *v)
 
 int pure_value_print(struct pure_value *p_v)
 {
+    const size_t size = 20; // TODO: should this be a global flag?
+    char buffer[size];
+
+    pure_value_to_string(buffer, size, p_v); // TODO: match return value
+
+    printf("%s", buffer);
+    return 0;
+}
+
+int pure_value_to_string(char *buffer, size_t size, struct pure_value *p_v)
+{
+    if (size < 2) {
+        printf("ERROR: Buffer size too small (pure_value_to_string)\n");
+        return -1;
+    }
+
     if (!p_v)
     {
-        printf("\nERROR: Pure_value does not exist\n");
+        printf("ERROR: Pure value does not exist\n");
         return VARIABLE_NULL;
     }
 
+    // TODO: Implement size checking for each kind
     switch (p_v->kind)
     {
-        case REGISTER:
-            ttk_register_print(p_v->ttk_register);
-            break;
         case NUMBER:
-            printf("%d", p_v->number);
+            snprintf(buffer, size, "%d", p_v->number);
+            break;
+        case REGISTER:
+            ttk_register_to_string(buffer, size, p_v->ttk_register);
             break;
         case LABEL:
-            label_print(p_v->label);
+            label_to_string(buffer, size, p_v->label);
             break;
         default:
-            return SWITCH_NOT_MATCHED;
+            assert(false && "Pure value kind not matched");
     }
 
     return 0;
 }
 
-int value_print(struct value *v)
+int value_to_string(char *buffer, size_t size, struct value *v)
 {
+    // TODO: is this a proper limit?
+    if (size < 2) {
+        printf("ERROR: Buffer size too small (value_to_string)\n");
+        return -1;
+    }
 
     if (!v)
     {
@@ -183,53 +212,94 @@ int value_print(struct value *v)
         return VARIABLE_NULL;
     }
 
+
+    const size_t prefix_size = 2; // TODO: Should this be a global variable?
+    char prefix[prefix_size];
     // add = or @ to the beginnig of value
     switch (v->addr_mode)
     {
         case IMMEDIATE:
-            printf("=");
+            snprintf(prefix, prefix_size, "=");
             break;
         case INDIRECT:
-            printf("@");
+            snprintf(prefix, prefix_size, "@");
             break;
         case DIRECT:
+            snprintf(prefix, prefix_size, "");
             break;
+        default:
+            assert(false && "Value addressing mode not matched");
     }
 
+
+
+    const size_t value_size = size*2; // FIXME: Better value for value_size
+    char value_buffer[value_size];
+    int err;
     switch (v->indexing_mode)
     {
         case NONE:
         {
-            int err = pure_value_print(v->value);
+
+            err = pure_value_to_string(value_buffer, value_size, v->value);
             if (err)
                 return err;
             break;
         }
+
         case INDEXED:
         {
-            int err = pure_value_print(v->value);
+            err = pure_value_to_string(value_buffer, value_size, v->value);
             if (err)
                 return err;
-            printf("(");
-            err = ttk_register_print(v->index_register); // is already defined
-            if (err)
-                return err;
-            printf(")");
-            break;
 
+            strncat(value_buffer, "(", 2);
+
+            const size_t ttk_reg_size = 5;
+            char ttk_reg_buffer[ttk_reg_size];
+            err = ttk_register_to_string(ttk_reg_buffer, ttk_reg_size, v->index_register); // is already defined
+            if (err)
+                return err;
+            strncat(value_buffer, ttk_reg_buffer, value_size);
+
+            strncat(value_buffer, ")", 2);
+            break;
         }
+
         case INDEXED_ONLY_IREG:
         {
-            printf("(");
-            int err = ttk_register_print(v->index_register);
+            strncat(value_buffer, "(", 2);
+
+            const size_t ttk_reg_size = 5;
+            char ttk_reg_buffer[ttk_reg_size];
+            err = ttk_register_to_string(ttk_reg_buffer, ttk_reg_size, v->index_register);
             if (err)
                 return err;
-            printf(")");
+
+            strncat(value_buffer, ")", 2);
             break;
         }
         default:
-            return SWITCH_NOT_MATCHED;
+            assert(false && "Value indexing mode not matched");
     }
+
+    snprintf(buffer, size, "%s%s", prefix, value_buffer);
+    
+    /*
+    strncat(buffer, prefix, prefix_size);
+    strncat(buffer, value_buffer, size);
+    */
+
+    return 0;
+}
+
+int value_print(struct value *v)
+{
+    const size_t size = 20;
+    char buffer[size];
+
+    value_to_string(buffer, size, v);
+    printf("%s", buffer);
 
     return 0;
 }

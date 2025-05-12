@@ -29,6 +29,14 @@ int label_to_string(char* buffer, size_t size, struct label *l) {
         return -1;
     }
 
+    // TODO: Determine if this is needed
+    /*
+    if (size > 20) {
+        printf("ERROR: Buffer size too big (label)\n");
+        return -1;
+    }
+    */
+
     if (!l->name)
     {
         printf("ERROR: Label name doesn't exist.\n");
