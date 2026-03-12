@@ -1,0 +1,7 @@
+# Source - https://stackoverflow.com/a
+# Posted by Aincvy, modified by community. See post 'Timeline' for change history
+# Retrieved 2026-01-11, License - CC BY-SA 4.0
+
+CompileFlags: # Tweak the parse settings, example directory given to show format
+  Add:
+    - "-I./include"            # e.g `-I/usr/include/SDL2`  suggested from @Palmkeep

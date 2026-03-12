@@ -2,7 +2,6 @@
 #define LABEL_H
 
 #include <stddef.h>
-#include "expr.h"
 
 typedef enum {
     LABEL_CONST,
